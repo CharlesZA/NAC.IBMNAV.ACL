@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAC.IBMNAV.ACL", "NAC.IBMNA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAC.IBMNAV.ACL.Tests", "NAC.IBMNAV.ACL.Tests\NAC.IBMNAV.ACL.Tests.csproj", "{C5B612E5-E43A-40C2-85DE-C18B062EA9CB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{1392B7AE-54AA-4BE3-88A7-6FCCB900D8C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,6 +26,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C5B612E5-E43A-40C2-85DE-C18B062EA9CB} = {1392B7AE-54AA-4BE3-88A7-6FCCB900D8C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {15CED537-A1F1-4193-85B6-9EF4DC2EFC0E}

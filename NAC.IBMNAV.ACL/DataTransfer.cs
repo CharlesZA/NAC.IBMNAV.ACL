@@ -42,17 +42,13 @@ namespace NAC.IBMNAV.ACL
                 Process process;
                 string command;
                 string pluginCommand;
+                string fileDefinitionLocation;
 
-                if (EnableUpload)
-                {
-                    pluginCommand = "/PLUGIN=UPLOAD";
-                }
-                else
-                {
-                    pluginCommand = "/PLUGIN=DOWNLOAD";
-                }
+                fileDefinitionLocation = SetFileDefinitionLocation();
+                pluginCommand = SetPluginCommand();
 
-                command = @"java -jar " + ACSBundleLocation + " " + pluginCommand + " /FILE=" + DataDefinitionLocation;
+
+                command = @"java -jar " + ACSBundleLocation + " " + pluginCommand + " " + fileDefinitionLocation;
 
                 processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
                 processInfo.CreateNoWindow = true;
@@ -74,19 +70,7 @@ namespace NAC.IBMNAV.ACL
             }
             catch (Exception ex)
             {
-                string sSource;
-                string sLog;
-                string sEvent;
-
-                sSource = "NAC.IBMNAV.ACL";
-                sLog = "Application";
-                sEvent = "DataTransfer::ExecuteTransfer() Error: ";
-
-                if (!EventLog.SourceExists(sSource))
-                    EventLog.CreateEventSource(sSource, sLog);
-
-                EventLog.WriteEntry(sSource, sEvent + ex.Message, EventLogEntryType.Error, 234);
-
+                LogExecuteTransferEvent(ex);
 
                 throw;
             }
@@ -94,6 +78,41 @@ namespace NAC.IBMNAV.ACL
             return true;
         }
 
+        private static void LogExecuteTransferEvent(Exception ex)
+        {
+            string sSource;
+            string sLog;
+            string sEvent;
 
+            sSource = "NAC.IBMNAV.ACL";
+            sLog = "Application";
+            sEvent = "DataTransfer::ExecuteTransfer() Error: ";
+
+            if (!EventLog.SourceExists(sSource))
+                EventLog.CreateEventSource(sSource, sLog);
+
+            EventLog.WriteEntry(sSource, sEvent + ex.Message, EventLogEntryType.Error, 234);
+        }
+
+        private string SetFileDefinitionLocation()
+        {
+            // todo: add file extension checks here eg: dtfx and dttx
+            return "/FILE=" + DataDefinitionLocation;
+        }
+
+        private string SetPluginCommand()
+        {
+            string pluginCommand;
+            if (EnableUpload)
+            {
+                pluginCommand = "/PLUGIN=UPLOAD";
+            }
+            else
+            {
+                pluginCommand = "/PLUGIN=DOWNLOAD";
+            }
+
+            return pluginCommand;
+        }
     }
 }

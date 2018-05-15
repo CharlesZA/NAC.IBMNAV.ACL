@@ -8,6 +8,18 @@ namespace NAC.IBMNAV.ACL.Tests
     [TestClass]
     public class DataTransferTests
     {
+
+        [TestMethod]
+        public void ExecuteTransferTest()
+        {
+            // arrange
+            DataTransfer dataTransfer = new DataTransfer();
+
+            // assign
+
+            // assert
+        }
+
         [TestMethod]
         public void TestFileUploadToAmassis()
         {
