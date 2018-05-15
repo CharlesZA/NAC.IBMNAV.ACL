@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAC.IBMNAV.ACL", "NAC.IBMNAV.ACL\NAC.IBMNAV.ACL.csproj", "{88DAF066-190F-4B78-9BAF-91BEFB2A6DCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NAC.IBMNAV.ACL.Tests", "NAC.IBMNAV.ACL.Tests\NAC.IBMNAV.ACL.Tests.csproj", "{C5B612E5-E43A-40C2-85DE-C18B062EA9CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{88DAF066-190F-4B78-9BAF-91BEFB2A6DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88DAF066-190F-4B78-9BAF-91BEFB2A6DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88DAF066-190F-4B78-9BAF-91BEFB2A6DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5B612E5-E43A-40C2-85DE-C18B062EA9CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5B612E5-E43A-40C2-85DE-C18B062EA9CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5B612E5-E43A-40C2-85DE-C18B062EA9CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5B612E5-E43A-40C2-85DE-C18B062EA9CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
