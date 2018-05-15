@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace NAC.IBMNAV.ACL
 {
@@ -32,6 +33,66 @@ namespace NAC.IBMNAV.ACL
         /// </summary>
         public string DataDefinitionLocation { get; set; }
 
+        public bool ExecuteTransfer()
+        {
+            try
+            {
+                int exitCode;
+                ProcessStartInfo processInfo;
+                Process process;
+                string command;
+                string pluginCommand;
+
+                if (EnableUpload)
+                {
+                    pluginCommand = "/PLUGIN=UPLOAD";
+                }
+                else
+                {
+                    pluginCommand = "/PLUGIN=DOWNLOAD";
+                }
+
+                command = @"java -jar " + ACSBundleLocation + " " + pluginCommand + " /FILE=" + DataDefinitionLocation;
+
+                processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
+                processInfo.CreateNoWindow = true;
+                processInfo.UseShellExecute = false;
+
+                // *** Redirect the output ***
+                processInfo.RedirectStandardError = true;
+                processInfo.RedirectStandardOutput = true;
+
+                process = Process.Start(processInfo);
+                process.WaitForExit();
+
+                // *** Read the streams ***
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+
+                exitCode = process.ExitCode;
+
+            }
+            catch (Exception ex)
+            {
+                string sSource;
+                string sLog;
+                string sEvent;
+
+                sSource = "NAC.IBMNAV.ACL";
+                sLog = "Application";
+                sEvent = "DataTransfer::ExecuteTransfer() Error: ";
+
+                if (!EventLog.SourceExists(sSource))
+                    EventLog.CreateEventSource(sSource, sLog);
+
+                EventLog.WriteEntry(sSource, sEvent + ex.Message, EventLogEntryType.Error, 234);
+
+
+                throw;
+            }
+
+            return true;
+        }
 
 
     }

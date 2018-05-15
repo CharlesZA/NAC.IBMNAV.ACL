@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NAC.IBMNAV.ACL")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("NAV Data Transfer Tools for IBM iSeries")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("National Airways Corporation")]
 [assembly: AssemblyProduct("NAC.IBMNAV.ACL")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
