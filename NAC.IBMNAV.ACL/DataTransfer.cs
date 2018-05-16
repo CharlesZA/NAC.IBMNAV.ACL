@@ -102,49 +102,34 @@ namespace NAC.IBMNAV.ACL
 
         private void LogExecureTransferEvent(string output, string error, int exitCode)
         {
-            if (exitCode == 0)
+            // Success Message
+            string sSource;
+            string sLog;
+            string sEvent;
+
+            sSource = "NAC.IBMNAV.ACL";
+            sLog = "Application";
+
+            if (EnableUpload)
             {
-                // Success Message
-                string sSource;
-                string sLog;
-                string sEvent;
-
-                sSource = "NAC.IBMNAV.ACL";
-                sLog = "Application";
-                sEvent = "DataTransfer::ExecuteTransfer(): ";
-
-                try
-                {
-                    if (!EventLog.SourceExists(sSource))
-                        EventLog.CreateEventSource(sSource, sLog);
-
-                    EventLog.WriteEntry(sSource, sEvent + output, EventLogEntryType.Information, 234);
-
-                }
-                catch (System.Security.SecurityException)
-                {
-
-                    // bypass
-                }
-
+                sEvent = "DataTransfer::ExecuteTransfer(): Upload Action ";
             }
-            else
+            sEvent = "DataTransfer::ExecuteTransfer(): Download Action ";
+
+            try
             {
-                // Error occured
-                string sSource;
-                string sLog;
-                string sEvent;
-
-                sSource = "NAC.IBMNAV.ACL";
-                sLog = "Application";
-                sEvent = "DataTransfer::ExecuteTransfer() Error: ";
-
                 if (!EventLog.SourceExists(sSource))
                     EventLog.CreateEventSource(sSource, sLog);
 
-                EventLog.WriteEntry(sSource, sEvent + error, EventLogEntryType.Warning, 234);
+                EventLog.WriteEntry(sSource, sEvent + output, EventLogEntryType.Information, 234);
 
             }
+            catch (System.Security.SecurityException)
+            {
+
+                // bypass
+            }
+
         }
 
         private static void LogExecuteTransferExceptionEvent(Exception ex)
