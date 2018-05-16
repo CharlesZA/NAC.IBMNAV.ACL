@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.IO;
 
 namespace NAC.IBMNAV.ACL
 {
@@ -15,6 +16,8 @@ namespace NAC.IBMNAV.ACL
         public DataTransfer()
         {
             EnableUpload = false;
+            ACSBundleLocation = "";
+            DataDefinitionLocation = "";
         }
 
         /// <summary>
@@ -46,6 +49,7 @@ namespace NAC.IBMNAV.ACL
 
                 fileDefinitionLocation = SetFileDefinitionLocation();
                 pluginCommand = SetPluginCommand();
+                CheckACSBundleLocation();
 
 
                 command = @"java -jar " + ACSBundleLocation + " " + pluginCommand + " " + fileDefinitionLocation;
@@ -67,10 +71,14 @@ namespace NAC.IBMNAV.ACL
 
                 exitCode = process.ExitCode;
 
+
+                // Log event
+                LogExecureTransferEvent(output, error, exitCode);
+
             }
             catch (Exception ex)
             {
-                LogExecuteTransferEvent(ex);
+                LogExecuteTransferExceptionEvent(ex);
 
                 throw;
             }
@@ -78,7 +86,68 @@ namespace NAC.IBMNAV.ACL
             return true;
         }
 
-        private static void LogExecuteTransferEvent(Exception ex)
+        private void CheckACSBundleLocation()
+        {
+            if (String.IsNullOrWhiteSpace(ACSBundleLocation))
+            {
+                throw new ArgumentNullException("acsbundle.jar location has not been specified");
+            }
+
+            if (File.Exists(ACSBundleLocation) == false)
+            {
+                throw new FileNotFoundException($"The IBM iSeries Client Access application could not be located in {ACSBundleLocation}");
+            }
+
+        }
+
+        private void LogExecureTransferEvent(string output, string error, int exitCode)
+        {
+            if (exitCode == 0)
+            {
+                // Success Message
+                string sSource;
+                string sLog;
+                string sEvent;
+
+                sSource = "NAC.IBMNAV.ACL";
+                sLog = "Application";
+                sEvent = "DataTransfer::ExecuteTransfer(): ";
+
+                try
+                {
+                    if (!EventLog.SourceExists(sSource))
+                        EventLog.CreateEventSource(sSource, sLog);
+
+                    EventLog.WriteEntry(sSource, sEvent + output, EventLogEntryType.Information, 234);
+
+                }
+                catch (System.Security.SecurityException)
+                {
+
+                    // bypass
+                }
+
+            }
+            else
+            {
+                // Error occured
+                string sSource;
+                string sLog;
+                string sEvent;
+
+                sSource = "NAC.IBMNAV.ACL";
+                sLog = "Application";
+                sEvent = "DataTransfer::ExecuteTransfer() Error: ";
+
+                if (!EventLog.SourceExists(sSource))
+                    EventLog.CreateEventSource(sSource, sLog);
+
+                EventLog.WriteEntry(sSource, sEvent + error, EventLogEntryType.Warning, 234);
+
+            }
+        }
+
+        private static void LogExecuteTransferExceptionEvent(Exception ex)
         {
             string sSource;
             string sLog;
@@ -88,15 +157,51 @@ namespace NAC.IBMNAV.ACL
             sLog = "Application";
             sEvent = "DataTransfer::ExecuteTransfer() Error: ";
 
-            if (!EventLog.SourceExists(sSource))
-                EventLog.CreateEventSource(sSource, sLog);
+            try
+            {
+                if (!EventLog.SourceExists(sSource))
+                    EventLog.CreateEventSource(sSource, sLog);
 
-            EventLog.WriteEntry(sSource, sEvent + ex.Message, EventLogEntryType.Error, 234);
+                EventLog.WriteEntry(sSource, sEvent + ex.Message, EventLogEntryType.Error, 234);
+
+            }
+            catch (System.Security.SecurityException)
+            {
+
+                // bypass
+            }
         }
 
         private string SetFileDefinitionLocation()
         {
             // todo: add file extension checks here eg: dtfx and dttx
+
+            if (File.Exists(DataDefinitionLocation) == false)
+            {
+                throw new FileNotFoundException($"DataDefinitionLocation could not be found: {DataDefinitionLocation}");
+            }
+
+            string extensionToCheck = Path.GetExtension(DataDefinitionLocation);
+            if (extensionToCheck != ".dtfx" && extensionToCheck != ".dttx")
+            {
+                throw new FileNotFoundException("Invalid Data File definition");
+            }
+
+            if (EnableUpload)
+            {
+                if (extensionToCheck != ".dttx")
+                {
+                    throw new FileNotFoundException("Invalid Data File definition. The extionsion must be dttx.");
+                }
+            }
+            else
+            {
+                if (extensionToCheck != ".dtfx")
+                {
+                    throw new FileNotFoundException("Invalid Data File definition. The extionsion must be dtfx.");
+                }
+            }
+
             return "/FILE=" + DataDefinitionLocation;
         }
 
